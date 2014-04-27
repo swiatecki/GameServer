@@ -55,14 +55,21 @@ class Form(QWidget):
 		""" LAYOUT """
 
 		nameLabel = QLabel("Name:")
-		self.nameLine = QLineEdit()
-		self.submitButton = QPushButton("Submit")
+		#self.nameLine = QLineEdit()
+		self.test = QPushButton("Test")
 		self.qlist = QListWidget()
+		self.startBtn = QPushButton("Start Game")
 
 		buttonLayout1 = QVBoxLayout()
 		buttonLayout1.addWidget(nameLabel)
-		buttonLayout1.addWidget(self.nameLine)
-		buttonLayout1.addWidget(self.submitButton)
+		buttonLayout1.addWidget(self.test)
+		
+		
+
+		buttonLayout1.addWidget(self.startBtn)
+		self.startBtn.clicked.connect(self.startGame)
+
+
 		buttonLayout1.addWidget(self.qlist)
 		
 		
@@ -73,14 +80,14 @@ class Form(QWidget):
 			item.setText('Group #' + str(i))
 			item.setIcon(icon)"""
 		
-		self.submitButton.clicked.connect(self.submitContact)
+		self.test.clicked.connect(self.submitContact)
 
 		mainLayout = QGridLayout()
-		# mainLayout.addWidget(nameLabel, 0, 0)
+		#mainLayout.addWidget(nameLabel, 0, 0)
 		mainLayout.addLayout(buttonLayout1, 0, 1)
 
 		self.setLayout(mainLayout)
-		self.setWindowTitle("Hello Qt")
+		self.setWindowTitle("Clients")
 
 	def submitContact(self):
 
@@ -103,20 +110,25 @@ class Form(QWidget):
 		#Lets make our GUI update
 		newInfo = True	
 
+	def startGame(self):
+		self.q = QuestionForm()
+		self.q.resize(800, 600)
+		self.q.show()
+
 	def updateGUI(self,signal):
 		global playerList
 		if(signal):
 			# UPDATE!! 
 			#Check which items are not in the items, but in playerlist
-			print("Items: " + str(len(self.items)))
+			#print("Items: " + str(len(self.items)))
 			pl = [x.id for x in playerList]
-			print("PL "  + str(len(pl)))
-			print("ID:")
-			print(playerList[0].id)
+			#print("PL "  + str(len(pl)))
+			#print("ID:")
+			#print(playerList[0].id)
 
 			diff = list(set(pl).difference(self.items))
 
-			print(str(len(diff)))
+			#print(str(len(diff)))
 
 			for x in diff:
 				
@@ -124,9 +136,87 @@ class Form(QWidget):
 				item = QListWidgetItem(self.qlist)
 				icon = QIcon('ok.png')
 				#icon = QIcon('D:\python-dev\ok.png')
-				item.setText('Group #' + str(x.id))
+				item.setText('Group #' + str(x))
 				item.setIcon(icon)	
-				self.items.append(x.id)
+				self.items.append(x)
+
+
+
+class QuestionForm(QWidget):
+	items = []
+	def __init__(self, parent=None):
+		super(QuestionForm, self).__init__(parent)
+
+		""" THREADING """
+
+
+
+		""" LAYOUT """
+
+		
+		self.qlist = QListWidget()
+
+		buttonLayout1 = QVBoxLayout()
+		
+		
+		buttonLayout1.addWidget(self.qlist)
+		
+		
+		"""for i in [1,2,4,1,7,3]:
+			item = QListWidgetItem(self.qlist)
+			icon = QIcon('ok.png')
+			#icon = QIcon('D:\python-dev\ok.png')
+			item.setText('Group #' + str(i))
+			item.setIcon(icon)"""
+
+		answers = QGridLayout()
+		f = QFont('Helvetica', 16)
+	
+		ans = []
+
+		ans1 =  QLabel("[A]")
+		ans2 =  QLabel("[B]")
+		ans3 =  QLabel("[C]")
+		ans4 =  QLabel("[D]")
+
+		ans.append(ans1)
+		ans.append(ans2)
+		ans.append(ans3)
+		ans.append(ans4)
+
+		for x in ans:
+			x.setFont(f)
+
+		answers.addWidget(ans1, 0, 0)
+		answers.addWidget(ans2, 0, 1)
+		answers.addWidget(ans3, 1, 0)
+		answers.addWidget(ans4, 1, 1)
+		
+
+		mainLayout = QGridLayout()
+		titleLabel = QLabel("Question 1:")
+		font = QFont('Helvetica', 42)
+		titleLabel.setFont(font)
+
+		#Nav buttons
+		navLayout = QHBoxLayout()	
+		self.next = QPushButton("Next")
+		self.prev = QPushButton("Prev")
+		navLayout.addWidget(self.prev)
+		navLayout.addWidget(self.next)
+
+
+		mainLayout.addWidget(titleLabel, 0, 0)
+		mainLayout.addLayout(answers, 1, 0)
+		mainLayout.addLayout(buttonLayout1, 2, 0)
+		mainLayout.addLayout(navLayout, 3, 0)
+
+		self.setLayout(mainLayout)
+		self.setWindowTitle("Question")
+
+
+
+
 
 
 
@@ -158,21 +248,24 @@ class serialThread(threading.Thread):
 
 					#Might want to change to a reconnect mode
 					print ("Unable to open inital comm")	
-					"""return -1"""
-					#Lets use dummy data.
+					return -1
+					#Lets use dummy data. Comment the return above out.
 
 					
-		print("Com status: ")
+		print("Com status: ")	
 		ser.isOpen()
 
 
 
 		while(runstate):
 			# Read from the comport
-			#if(ser.isOpen):
-			if(1!=1):
+			if(ser.isOpen):
+			#if(1!=1):
 				#Port open, lets read
+
 				currLine = ser.readline()
+				currLine = currLine.decode("utf-8")
+				print(currLine)
 
 				s = currLine.split(',')
 
@@ -186,6 +279,7 @@ class serialThread(threading.Thread):
 					#Join request or actual answer
 
 					answer = int(s[2])
+					#print("Got ans: " + str(answer))
 
 					if(qID == 0):
 						#Join request
@@ -196,6 +290,7 @@ class serialThread(threading.Thread):
 
 						if (answer not in [p.id for p in playerList]):
 							# Add it
+							print("Adding player")
 							p = Player(answer)
 							playerList.append(p)
 
@@ -215,13 +310,13 @@ class serialThread(threading.Thread):
 
 			else:
 				#Port not open, handle this
-				"""print("Com was closed, trying to reopen")
+				print("Com was closed, trying to reopen")
 				try:
 					ser = serial.Serial(self.COMport)
 				except SerialException:
-					print ("Unable to open")"""
+					print ("Unable to open")
 				# something went wrong?
-				if(test):
+				"""if(test):
 					p = Player(2)
 					playerList.append(Player(p))
 					print ("sooo:")
@@ -229,7 +324,7 @@ class serialThread(threading.Thread):
 
 					#Lets make our GUI update
 					newInfo = True	
-					test = False
+					test = False"""
 
 		# Runstate changed. Close stuff and return
 
@@ -252,20 +347,27 @@ if __name__ == '__main__':
 	#List ports python -m serial.tools.list_ports
 	# the COM parameter on Windows:
 		# To open COMn set COMport to n-1. Eg COM 24 = 23
-	sthread = serialThread(1,23)
+	sthread = serialThread(1,17)
 
 	
 
 	sthread.start()
 
 	screen = Form()
+	screen.resize(400, 600)
 	screen.show()
-	app.exec_() #blocks until the window is closed.
+	try:
+		app.exec_() #blocks until the window is closed.
+	except KeyboardInterrupt:
+		sys.exit()
+
 	runstate = False
 
 	""" Spin down threads """
-
-	sthread.join()
+	try:
+		sthread.join(2)
+	except KeyboardInterrupt:
+			sys.exit()
 
 
 	print("All OK - good night")
