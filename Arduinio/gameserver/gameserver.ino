@@ -208,14 +208,14 @@ void loop(void)
        
        // Create payload
        char * ptr;
-       question.questionID = buffer[1];
-       ptr = &buffer[4];
+       question.questionID = buffer[0]-48; // Char to byte
+       ptr = &buffer[1];
        strncpy(question.optionA,ptr,ANSLEN);
-        ptr = &buffer[4+6];
+        ptr = &buffer[1+6];
         strncpy(question.optionB,ptr,ANSLEN);
-        ptr = &buffer[4+12];
+        ptr = &buffer[1+12];
         strncpy(question.optionC,ptr,ANSLEN);
-        ptr = &buffer[4+18];
+        ptr = &buffer[1+18];
         strncpy(question.optionD,ptr,ANSLEN);
       
          for(int i =0;i<MAXCLIENTS;i++){
@@ -238,7 +238,7 @@ void loop(void)
          
          // All sent! 
          save = 0;
-        // state = RECV_A;
+         state = RECV_A;
        
        }
        
@@ -253,8 +253,8 @@ void loop(void)
 
     break;
 
- // case RECV_A:
-   // network.update();
+  case RECV_A:
+    network.update();
 
     /* 1) Read the network
      2) Check if the client has answered the current quesion
@@ -265,7 +265,7 @@ void loop(void)
     // ToDo: add array to keep track of the clients who have answered the current question
 
 
-    //break;
+    break;
 
 
 
