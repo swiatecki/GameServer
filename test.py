@@ -1,3 +1,13 @@
+"""
+Gameserver written for course 41030 @ DTU.
+Author: Nicholas Swiatecki, nicholas@swiatecki.com
+Github: https://github.com/swiatecki/GameServer
+License: Free for private/educational use. 
+		Please leave a reference to the original code.
+		Also, if you improve the code, share it with me :)
+Tested on windows with python 3.3.5.
+Hardware: Arudino Uno + NRF24l01
+"""
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
@@ -6,11 +16,54 @@ from serial import SerialException
 import threading
 import time
 import random
+import binascii
 
 
 runstate = True
 newInfo = False
 playerList = []
+started = False
+Q = None;
+
+
+class Questions:
+
+
+	questionList = []
+
+
+	def __init__(self):
+		self.curentQuestion = 1
+
+		self.questionList.append({
+			'Question': 'Which Animal is the heavyist?',
+			'A': 'Monkey',
+			'B': 'Elephant',
+			'C': 'Slightly larger Goose',
+			'D': 'Goose',
+			})
+
+		self.questionList.append({
+			'Question': 'How many fingers do you have?',
+			'A': '1',
+			'B': '11',
+			'C': '10',
+			'C': '6',
+			})
+
+
+	
+
+	def getQuestion(self):
+		return self.questionList[self.curentQuestion-1]
+
+	def nextQuestion(self):
+		self.curentQuestion += 1
+
+	def questionID(self):
+		return self.curentQuestion
+
+
 
 class Player:
 	
@@ -19,6 +72,8 @@ class Player:
 	def __init__(self, _id):
 		self.id = _id
 		self.score = 0
+
+
 
 class qtUpdaterThread(QThread):
 	trigger = pyqtSignal(int)
@@ -111,34 +166,46 @@ class Form(QWidget):
 		newInfo = True	
 
 	def startGame(self):
+		global started
+		global newInfo
 		self.q = QuestionForm()
 		self.q.resize(800, 600)
 		self.q.show()
+		started = True
+		#print("Started is now" + str(started))
+		newInfo = True
 
 	def updateGUI(self,signal):
 		global playerList
+		global started
 		if(signal):
-			# UPDATE!! 
-			#Check which items are not in the items, but in playerlist
-			#print("Items: " + str(len(self.items)))
-			pl = [x.id for x in playerList]
-			#print("PL "  + str(len(pl)))
-			#print("ID:")
-			#print(playerList[0].id)
-
-			diff = list(set(pl).difference(self.items))
-
-			#print(str(len(diff)))
-
-			for x in diff:
+			if started is False:
+				# UPDATE!! 
 				
-				#None found, add! 
-				item = QListWidgetItem(self.qlist)
-				icon = QIcon('ok.png')
-				#icon = QIcon('D:\python-dev\ok.png')
-				item.setText('Group #' + str(x))
-				item.setIcon(icon)	
-				self.items.append(x)
+				pl = [x.id for x in playerList]
+
+				diff = list(set(pl).difference(self.items))
+
+				#print(str(len(diff)))
+
+				for x in diff:
+					
+					#None found, add! 
+					item = QListWidgetItem(self.qlist)
+					icon = QIcon('ok.png')
+					#icon = QIcon('D:\python-dev\ok.png')
+					item.setText('Group #' + str(x))
+					item.setIcon(icon)	
+					self.items.append(x)
+			elif started is True:
+				# Game started.
+				
+				self.q.titleLabel.setText(self.q.theQuestion['Question'])
+
+				self.q.ans1.setText("A: " + self.q.theQuestion['A'])
+				self.q.ans2.setText("B: " +self.q.theQuestion['B'])
+				self.q.ans3.setText("C: " +self.q.theQuestion['C'])
+				self.q.ans4.setText("D: " +self.q.theQuestion['D'])
 
 
 
@@ -146,13 +213,14 @@ class QuestionForm(QWidget):
 	items = []
 	def __init__(self, parent=None):
 		super(QuestionForm, self).__init__(parent)
-
+		global playerList
 		""" THREADING """
 
 
 
 		""" LAYOUT """
-
+		f = QFont('Helvetica', 16)
+		self.setFont(f)
 		
 		self.qlist = QListWidget()
 
@@ -172,31 +240,47 @@ class QuestionForm(QWidget):
 		answers = QGridLayout()
 		f = QFont('Helvetica', 16)
 	
-		ans = []
+		self.ans = []
 
-		ans1 =  QLabel("[A]")
-		ans2 =  QLabel("[B]")
-		ans3 =  QLabel("[C]")
-		ans4 =  QLabel("[D]")
+		self.ans1 =  QLabel("[A]")
+		self.ans2 =  QLabel("[B]")
+		self.ans3 =  QLabel("[C]")
+		self.ans4 =  QLabel("[D]")
 
-		ans.append(ans1)
-		ans.append(ans2)
-		ans.append(ans3)
-		ans.append(ans4)
+		self.ans.append(self.ans1)
+		self.ans.append(self.ans2)
+		self.ans.append(self.ans3)
+		self.ans.append(self.ans4)
 
-		for x in ans:
+		for x in self.ans:
 			x.setFont(f)
 
-		answers.addWidget(ans1, 0, 0)
-		answers.addWidget(ans2, 0, 1)
-		answers.addWidget(ans3, 1, 0)
-		answers.addWidget(ans4, 1, 1)
+		answers.addWidget(self.ans1, 0, 0)
+		answers.addWidget(self.ans2, 0, 1)
+		answers.addWidget(self.ans3, 1, 0)
+		answers.addWidget(self.ans4, 1, 1)
 		
 
 		mainLayout = QGridLayout()
-		titleLabel = QLabel("Question 1:")
+		self.titleLabel = QLabel("Question 1:")
 		font = QFont('Helvetica', 42)
-		titleLabel.setFont(font)
+		self.titleLabel.setFont(font)
+
+
+		#Status bar
+		lblNumAns =  QLabel("Answers:")
+		self.lblAns = QLabel("0")
+		lblspacer =  QLabel("/")
+		lblNumClients = QLabel()
+		lblNumClients.setText(str(len(playerList)))
+		
+		statusLayout = QHBoxLayout()
+		statusLayout.addWidget(lblNumAns)
+		statusLayout.addWidget(self.lblAns)
+		statusLayout.addWidget(lblspacer)
+		statusLayout.addWidget(lblNumClients)
+
+
 
 		#Nav buttons
 		navLayout = QHBoxLayout()	
@@ -206,15 +290,34 @@ class QuestionForm(QWidget):
 		navLayout.addWidget(self.next)
 
 
-		mainLayout.addWidget(titleLabel, 0, 0)
+		mainLayout.addWidget(self.titleLabel, 0, 0)
 		mainLayout.addLayout(answers, 1, 0)
 		mainLayout.addLayout(buttonLayout1, 2, 0)
 		mainLayout.addLayout(navLayout, 3, 0)
+		mainLayout.addLayout(statusLayout, 4, 0)
 
 		self.setLayout(mainLayout)
 		self.setWindowTitle("Question")
 
 
+
+		self.next.clicked.connect(self.nextHandler)
+		
+		
+		self.theQuestion = Q.getQuestion()
+
+
+
+	def setText(self):
+		pass
+
+	def nextHandler(self):
+		global newInfo
+
+		Q.nextQuestion()
+		self.theQuestion = Q.getQuestion()
+
+		newInfo = True
 
 
 
@@ -233,9 +336,10 @@ class serialThread(threading.Thread):
 	def run(self):
 		global newInfo
 		global runstate
+		global started
 
 		test = True
-
+		state = 0
 		#This what actually happens
 		try: 
 			ser = serial.Serial()
@@ -256,15 +360,17 @@ class serialThread(threading.Thread):
 		ser.isOpen()
 
 
-		ser.flushInput();
-		ser.flushOutput();
+		#ser.flushInput();
+		#ser.flushOutput();
 
 		""" The pySerial.write takes a byte String, but in python 3,
 		strings are unicode per dafult. """
 		#outString = b"s0" # Serial
-		time.sleep(2)
-		outString = "s0" 
-		ser.write(str.encode(outString));
+		time.sleep(1)
+		
+		ser.write(str.encode("s0"))
+
+		sent = False
 
 		while(runstate):
 			# Read from the comport
@@ -273,14 +379,21 @@ class serialThread(threading.Thread):
 				#Port open, lets read
 
 				currLine = ser.readline()
-				currLine = currLine.decode("utf-8")
-				print(currLine)
+				hexl = binascii.hexlify(currLine);
+				rawline = currLine
+				print(b"HEX:" + rawline)
+				currLine = currLine.decode("utf-8",errors='ignore')
+				#print(currLine)
 
 				# We prefix out commands with //, if the line does not start with // its debug info
 
 				if(currLine[:2] != '//'):
 					#Printing debug info
-					print("SERIAL: " + currLine)
+					# print serial here
+					print("SERIAL:" + currLine)
+					if(rawline == b"STATE IS NOW:1.\r\n"):
+						print("STATE CHANGE!")
+						state =1
 				else:
 					#Its data! -> 
 					#Strip of the // 
@@ -325,6 +438,32 @@ class serialThread(threading.Thread):
 						#Something went wrong 
 						pass
 
+				# We have read, now - lets see if there is something to send
+
+				""" SEND PART"""
+				if(started):
+					# Set state on arduino!
+					if(state == 0):
+						ser.write(str.encode("s1"))
+					#print("STARTED!")
+					
+					#ser.flushOutput()
+
+					if(sent == False and state ==1):
+						print("Sending")
+						tmp = Q.getQuestion()
+
+						outString = "q," + str(Q.questionID()) + "," + \
+						tmp['A'][:6] + "," + tmp['B'][:6] + "," \
+						+ tmp['C'][:6] + "," + tmp['D'][:6]
+
+						
+						print("Gonna write:")
+						print(str.encode(outString) + b'\0')
+						ser.write(str.encode(outString)+b'\0');
+						sent = True
+
+
 
 
 
@@ -363,7 +502,7 @@ if __name__ == '__main__':
 
 	#Spin up threads
 
-
+	Q = Questions()
 	#List ports python -m serial.tools.list_ports
 	# the COM parameter on Windows:
 		# To open COMn set COMport to n-1. Eg COM 24 = 23
