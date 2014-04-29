@@ -255,7 +255,16 @@ class serialThread(threading.Thread):
 		print("Com status: ")	
 		ser.isOpen()
 
-		ser.write("s0")
+
+		ser.flushInput();
+		ser.flushOutput();
+
+		""" The pySerial.write takes a byte String, but in python 3,
+		strings are unicode per dafult. """
+		#outString = b"s0" # Serial
+		time.sleep(2)
+		outString = "s0" 
+		ser.write(str.encode(outString));
 
 		while(runstate):
 			# Read from the comport
@@ -319,28 +328,28 @@ class serialThread(threading.Thread):
 
 
 
-				else:
-					#Port not open, handle this
-					print("Com was closed, trying to reopen")
-					try:
-						ser = serial.Serial(self.COMport)
-					except SerialException:
-						print ("Unable to open")
-					# something went wrong?
-					"""if(test):
-						p = Player(2)
-						playerList.append(Player(p))
-						print ("sooo:")
-						print (playerList[0].id)
+		else:
+			#Port not open, handle this
+			print("Com was closed, trying to reopen")
+			try:
+				ser = serial.Serial(self.COMport)
+			except SerialException:
+				print ("Unable to open")
+			# something went wrong?
+			"""if(test):
+				p = Player(2)
+				playerList.append(Player(p))
+				print ("sooo:")
+				print (playerList[0].id)
 
-						#Lets make our GUI update
-						newInfo = True	
-						test = False"""
+				#Lets make our GUI update
+				newInfo = True	
+				test = False"""
 
 		# Runstate changed. Close stuff and return
-
+		print("Closing Serial")
 		ser.close()
-
+		print("Serial Closed")
 		return
 			
 			
@@ -358,7 +367,7 @@ if __name__ == '__main__':
 	#List ports python -m serial.tools.list_ports
 	# the COM parameter on Windows:
 		# To open COMn set COMport to n-1. Eg COM 24 = 23
-	sthread = serialThread(1,17)
+	sthread = serialThread(1,22)
 
 	
 
@@ -377,7 +386,7 @@ if __name__ == '__main__':
 	""" Spin down threads """
 	try:
 		sthread.join(2)
-	except KeyboardInterrupt:
+	except:
 			sys.exit()
 
 

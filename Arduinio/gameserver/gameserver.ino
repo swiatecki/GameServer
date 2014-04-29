@@ -55,11 +55,15 @@ int to_send=0;
 void setup(void)
 {
   Serial.begin(115200);
-  Serial.println("RF24Network/examples/helloworld_rx/");
+  Serial.println("Starting gameserver Modem");
+ 
+ 
+ state = 0; // Start state.. 
  
   SPI.begin();
   radio.begin();
   network.begin(/*channel*/ 100, /*node address*/ this_node);
+  Serial.println("Init complete");
 }
 
 void loop(void)
@@ -67,13 +71,21 @@ void loop(void)
   
   while(Serial.available()){
   byte incomming = Serial.read();
+  Serial.print("State was:");
+  Serial.println(state);
     if(incomming == 's'){
       // if s, then next is state
+    
     state = Serial.read();
+    state = state-'0'; // Convert from char to int the snakey way
+    
+    
+     Serial.print("STATE IS NOW:");
+    Serial.print(state);
+    Serial.println(".");
     }
     
-    Serial.println("STATE IS NOW");
-    Serial.print(state);
+   
   
   switch(state){
   
