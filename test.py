@@ -303,15 +303,15 @@ class serialThread(threading.Thread):
 
 						if(qID == 0):
 							#Join request
-
+							print("GS: Got join request for team" + str(tID))
 							"""
 							1) Check is player ID exsits
 							2) add it"""
 
-							if (answer not in [p.id for p in playerList]):
+							if (tID not in [p.id for p in playerList]):
 								# Add it
 								print("Adding player")
-								p = Player(answer)
+								p = Player(tID)
 								playerList.append(p)
 
 								#Lets make our GUI update

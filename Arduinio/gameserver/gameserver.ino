@@ -44,8 +44,8 @@ struct answer_t
 byte state;
 
 const byte PREGAME = 0;
-const byte TRANSMIT = 1;
-const byte RECV = 2;
+const byte TRANSMIT_Q = 1;
+const byte RECV_A = 2;
 
 uint16_t clients[MAXCLIENTS] = {0};
 
@@ -83,8 +83,9 @@ void loop(void)
      Serial.print("STATE IS NOW:");
     Serial.print(state);
     Serial.println(".");
-    }
     
+    }
+    }
    
   
   switch(state){
@@ -93,6 +94,7 @@ void loop(void)
       /* LISTEN FOR JOIN REQUESTS */
     
       // Pump network
+      //Serial.println("Pumping");
       network.update();
       
       
@@ -116,7 +118,7 @@ void loop(void)
       
         if(answer.questionID == 0){
         // This is a join request, lets send it to the server
-        
+       // Serial.println("SENDING data to you!");
         sendToServer(0,answer.teamID,answer.answer);
         
         }else{
@@ -127,7 +129,7 @@ void loop(void)
   break;
   
   
-  case TRANSMIT:
+  case TRANSMIT_Q:
   
   
   
@@ -140,7 +142,7 @@ void loop(void)
   }
    
   
-}
+
 
 }
 
