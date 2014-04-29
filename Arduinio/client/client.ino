@@ -110,6 +110,18 @@ void loop(void)
         
         
         delay(3000);
+        
+     while ( network.available() )
+      {
+      RF24NetworkHeader header;
+      network.read(header,&question,sizeof(question));
+      
+      
+      Serial.print("QID:");
+      Serial.println(question.questionID);
+      Serial.println(question.optionA);
+      
+      }
       
       
      
