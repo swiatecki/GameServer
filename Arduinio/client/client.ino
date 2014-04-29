@@ -43,7 +43,7 @@ const byte PREGAME = 0;
 const byte TRANSMIT = 1;
 const byte RECV = 2;
 
-
+ int curTeam = 1;
 
 int to_send=0;
 
@@ -58,22 +58,27 @@ void setup(void)
   SPI.begin();
   radio.begin();
   network.begin(/*channel*/ 100, /*node address*/ this_node);
+  Serial.println("INIT OK");
 }
 
 void loop(void)
 {
   
-  int curTeam = 1;
+ 
   
   while(Serial.available()){
+   // Serial.println("got something");
   byte incomming = Serial.read();
-    if(incomming == 's'){
+    if(incomming == 'n'){
       // if s, then next is state
-    state = Serial.read();
+    curTeam++;
     }
     
-    Serial.println("STATE IS NOW");
-    Serial.print(state);
+    Serial.println("Team IS NOW");
+    Serial.print(curTeam);
+  }
+  
+  
   
   switch(state){
   
@@ -103,7 +108,7 @@ void loop(void)
       else
         Serial.println("failed.");
         
-        curTeam++;
+        
         delay(3000);
       
       
@@ -120,5 +125,5 @@ void loop(void)
   
 }
 
-}
+
 
