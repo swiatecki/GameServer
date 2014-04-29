@@ -255,7 +255,7 @@ class serialThread(threading.Thread):
 		print("Com status: ")	
 		ser.isOpen()
 
-
+		ser.write("s0")
 
 		while(runstate):
 			# Read from the comport
@@ -267,64 +267,75 @@ class serialThread(threading.Thread):
 				currLine = currLine.decode("utf-8")
 				print(currLine)
 
-				s = currLine.split(',')
+				# We prefix out commands with //, if the line does not start with // its debug info
 
-				#Determine type
-				type = s[0]
-				
+				if(currLine[:2] != '//'):
+					#Printing debug info
+					print("SERIAL: " + currLine)
+				else:
+					#Its data! -> 
+					#Strip of the // 
+					currLine = currLine[2:]
+					s = currLine.split(',')
 
-				if(type == 'a'): 
-				#answer
-					qID = int(s[1])
-					#Join request or actual answer
+					#Determine type
+					type = s[0]
+					
 
-					answer = int(s[2])
-					#print("Got ans: " + str(answer))
+					if(type == 'a'): 
+					#answer
+						qID = int(s[1])
+						#Join request or actual answer
 
-					if(qID == 0):
-						#Join request
+						tID = int(s[2])
 
-						"""
-						1) Check is player ID exsits
-						2) add it"""
+						answer = int(s[3])
+						#print("Got ans: " + str(answer))
 
-						if (answer not in [p.id for p in playerList]):
-							# Add it
-							print("Adding player")
-							p = Player(answer)
-							playerList.append(p)
+						if(qID == 0):
+							#Join request
 
-							#Lets make our GUI update
-							newInfo = True
+							"""
+							1) Check is player ID exsits
+							2) add it"""
+
+							if (answer not in [p.id for p in playerList]):
+								# Add it
+								print("Adding player")
+								p = Player(answer)
+								playerList.append(p)
+
+								#Lets make our GUI update
+								newInfo = True
+
+						else:
+							# handle answer
+							pass
 
 					else:
-						# handle answer
+						#Something went wrong 
 						pass
 
+
+
+
 				else:
-					#Something went wrong 
-					pass
+					#Port not open, handle this
+					print("Com was closed, trying to reopen")
+					try:
+						ser = serial.Serial(self.COMport)
+					except SerialException:
+						print ("Unable to open")
+					# something went wrong?
+					"""if(test):
+						p = Player(2)
+						playerList.append(Player(p))
+						print ("sooo:")
+						print (playerList[0].id)
 
-
-
-
-			else:
-				#Port not open, handle this
-				print("Com was closed, trying to reopen")
-				try:
-					ser = serial.Serial(self.COMport)
-				except SerialException:
-					print ("Unable to open")
-				# something went wrong?
-				"""if(test):
-					p = Player(2)
-					playerList.append(Player(p))
-					print ("sooo:")
-					print (playerList[0].id)
-
-					#Lets make our GUI update
-					newInfo = True	
-					test = False"""
+						#Lets make our GUI update
+						newInfo = True	
+						test = False"""
 
 		# Runstate changed. Close stuff and return
 

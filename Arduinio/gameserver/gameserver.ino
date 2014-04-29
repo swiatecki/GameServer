@@ -2,7 +2,8 @@
 #include <RF24.h>
 #include <SPI.h>
 
-#define MSGLEN 50
+#define ANSLEN 6
+#define MAXCLIENTS 18
 
 
 RF24 radio(8,7);
@@ -13,9 +14,6 @@ RF24Network network(radio);
 // Address of our node
 const uint16_t this_node = 0;
 
-// Address of the other node
-const uint16_t other_node = 1;
-
 const unsigned long interval = 2000; //ms
 
 // When did we last send?
@@ -25,21 +23,38 @@ unsigned long last_sent;
 unsigned long packets_sent;
 
 // Structure of our payload
-struct payload_t
+struct question_t
 {
-  char msg[MSGLEN];
+  byte questionID;
+  char optionA[ANSLEN];
+  char optionB[ANSLEN];
+  char optionC[ANSLEN];
+  char optionD[ANSLEN];
   
-};
+}question;
+
+struct answer_t
+{
+  byte questionID;
+  byte teamID;
+  byte answer;
+  
+}answer;
+
+byte state;
+
+const byte PREGAME = 0;
+const byte TRANSMIT = 1;
+const byte RECV = 2;
+
+uint16_t clients[MAXCLIENTS] = {0};
 
 
-
-payload_t out,in;
-uint16_t to=0;
 int to_send=0;
 
 void setup(void)
 {
-  Serial.begin(57600);
+  Serial.begin(115200);
   Serial.println("RF24Network/examples/helloworld_rx/");
  
   SPI.begin();
@@ -49,54 +64,85 @@ void setup(void)
 
 void loop(void)
 {
-  // Pump the network regularly
-  network.update();
-
-  // Is there anything ready for us?
-  while ( network.available() )
-  {
-    // If so, grab it and print it out
-    RF24NetworkHeader header;
+  
+  while(Serial.available()){
+  byte incomming = Serial.read();
+    if(incomming == 's'){
+      // if s, then next is state
+    state = Serial.read();
+    }
     
-    network.read(header,&in,sizeof(in));
+    Serial.println("STATE IS NOW");
+    Serial.print(state);
+  
+  switch(state){
+  
+  case PREGAME:
+      /* LISTEN FOR JOIN REQUESTS */
     
-    to = header.from_node;
-   Serial.print("got something");
-   Serial.print(" - From:");
-   Serial.println(to);
-   
-   
-   strncpy(out.msg,in.msg,MSGLEN);
-   Serial.write(out.msg);
-     Serial.println("");
-   to_send++;
-   
-   
-   
-  }
-  
-  
-  // Send part 
-  
-  // If it's time to send a message, send it!
-if(to_send > 0){
-
-
-    Serial.print("Sending...");
-  Serial.println("");
-
-
-    RF24NetworkHeader header(/*to node*/ to);
-    bool ok = network.write(header,&out,sizeof(out));
-    if (ok)
-      Serial.println("ok.");
-    else
-      Serial.println("failed.");
+      // Pump network
+      network.update();
       
-      to_send--;
+      
+      while ( network.available() )
+      {
+      RF24NetworkHeader header;
+      
+       // Check if its a new client.
+      
+        for(byte i =0;i<MAXCLIENTS;i++){
+          if(clients[i] != header.from_node){
+            // New client, add it! 
+            clients[i] = header.from_node;
+            break;
+          }
+        
+        }
+      
+      // Lets see what he has
+      network.read(header,&answer,sizeof(answer));
+      
+        if(answer.questionID == 0){
+        // This is a join request, lets send it to the server
+        
+        sendToServer(0,answer.teamID,answer.answer);
+        
+        }else{
+        // Ignore
+        }
+      
+      }
+  break;
+  
+  
+  case TRANSMIT:
+  
+  
+  
+  break;
+  
+  
+  
+  
+  
+  }
+   
+  
 }
-  
-  
-  
+
 }
-// vim:ai:cin:sts=2 sw=2 ft=cpp
+
+
+void sendToServer(byte Qid, byte Tid, byte ans){
+
+//  typeAsChar = '';
+//  if(type == joinrequest){typeAsChar = '}
+  /* //a,Qid,Tid,ans \n \r */
+  Serial.print("//a,");
+  Serial.print(Qid);
+  Serial.print(",");
+  Serial.print(Tid);
+  Serial.print(",");
+  Serial.println(ans);
+
+}
