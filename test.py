@@ -381,7 +381,7 @@ class serialThread(threading.Thread):
 				currLine = ser.readline()
 				hexl = binascii.hexlify(currLine);
 				rawline = currLine
-				print(b"HEX:" + rawline)
+				#print(b"HEX:" + rawline)
 				currLine = currLine.decode("utf-8",errors='ignore')
 				#print(currLine)
 
@@ -453,9 +453,9 @@ class serialThread(threading.Thread):
 						print("Sending")
 						tmp = Q.getQuestion()
 
-						outString = "q," + str(Q.questionID()) + "," + \
-						tmp['A'][:6] + "," + tmp['B'][:6] + "," \
-						+ tmp['C'][:6] + "," + tmp['D'][:6]
+						outString = "q" + str(Q.questionID()) + \
+						tmp['A'][:6]  + tmp['B'][:6]  \
+						+ tmp['C'][:6] + tmp['D'][:6]
 
 						
 						print("Gonna write:")
