@@ -137,7 +137,7 @@ void loop(void)
           Serial.print(i);
           clients[i] = header_in.from_node;
           i=MAXCLIENTS;
-          break;
+          //break;
         
         }
 
@@ -147,7 +147,7 @@ void loop(void)
        // Serial.print(header_in.from_node,BIN);
       if(answer.questionID == 0){
         // This is a join request, lets send it to the server
-        // Serial.println("SENDING data to you!");
+       // Serial.println("SENDING data to you!");
         sendToServer(0,answer.teamID,answer.answer);
 
       }
@@ -199,8 +199,9 @@ void loop(void)
         bufPos =0;
         save =2;
         Serial.print("(END by rn0) WE GOT:");
-       Serial.println(buffer);
-        break;
+       Serial.print(buffer);
+       Serial.println("X");
+       break;
         }
         else if(bufPos < BUFFERLEN){
           bufPos++;

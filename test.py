@@ -42,7 +42,7 @@ class Questions:
 			'A': 'Monkey',
 			'B': 'Elephant',
 			'C': 'Slightly larger Goose',
-			'D': 'Goose',
+			'D': 'Gese',
 			})
 
 		self.questionList.append({
@@ -464,6 +464,14 @@ class serialThread(threading.Thread):
 					if(sent == False and state ==1):
 						print("Sending")
 						tmp = Q.getQuestion()
+
+						
+						tmp['A'] = tmp['A'].ljust(6)
+						tmp['B'] = tmp['B'].ljust(6)
+						tmp['C'] = tmp['C'].ljust(6)
+						tmp['D'] = tmp['D'].ljust(6)
+
+
 
 						outString = "q" + str(Q.questionID()) + \
 						tmp['A'][:6]  + tmp['B'][:6]  \
