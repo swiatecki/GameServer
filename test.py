@@ -24,6 +24,8 @@ newInfo = False
 playerList = []
 started = False
 Q = None;
+sent = False
+state =0
 
 
 class Questions:
@@ -36,7 +38,7 @@ class Questions:
 		self.curentQuestion = 1
 
 		self.questionList.append({
-			'Question': 'Which Animal is the heavyist?',
+			'Question': 'Which Animal is the heaviest?',
 			'A': 'Monkey',
 			'B': 'Elephant',
 			'C': 'Slightly larger Goose',
@@ -48,7 +50,7 @@ class Questions:
 			'A': '1',
 			'B': '11',
 			'C': '10',
-			'C': '6',
+			'D': '6',
 			})
 
 
@@ -313,9 +315,13 @@ class QuestionForm(QWidget):
 
 	def nextHandler(self):
 		global newInfo
+		global sent
+		#global state
 
 		Q.nextQuestion()
 		self.theQuestion = Q.getQuestion()
+		sent = False
+		#state = 0
 
 		newInfo = True
 
@@ -337,6 +343,8 @@ class serialThread(threading.Thread):
 		global newInfo
 		global runstate
 		global started
+		global sent
+		global state 
 
 		test = True
 		state = 0
@@ -346,6 +354,7 @@ class serialThread(threading.Thread):
 			#ser.timeout(10) #should we have this?
 			ser.baudrate = 115200
 			ser.port = self.COMport
+			ser.timeout = 0.5
 			ser.open()
 		except SerialException:
 					#If no initial connection can be made..
@@ -379,6 +388,7 @@ class serialThread(threading.Thread):
 				#Port open, lets read
 
 				currLine = ser.readline()
+
 				hexl = binascii.hexlify(currLine);
 				rawline = currLine
 				#print(b"HEX:" + rawline)
@@ -390,6 +400,7 @@ class serialThread(threading.Thread):
 				if(currLine[:2] != '//'):
 					#Printing debug info
 					# print serial here
+					#if currLine is None:
 					print("SERIAL:" + currLine)
 					if(rawline == b"STATE IS NOW:1.\r\n"):
 						print("STATE CHANGE!")
@@ -431,8 +442,9 @@ class serialThread(threading.Thread):
 								newInfo = True
 
 						else:
-							# handle answer
-							pass
+							print("GS: Got ans for team" + str(tID) + " on Q=" + str(qID) + " with ans = " + str(answer))
+
+							
 
 					else:
 						#Something went wrong 
