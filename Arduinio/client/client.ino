@@ -11,7 +11,7 @@ RF24 radio(8,7);
 RF24Network network(radio);
 
 // Address of our node
-const uint16_t this_node = 1;
+const uint16_t this_node = 01;
 
 const unsigned long interval = 2000; //ms
 
@@ -40,20 +40,22 @@ struct answer_t
 byte state;
 
 const byte PREGAME = 0;
-const byte TRANSMIT = 1;
-const byte RECV = 2;
+const byte TRANSMIT_ANS = 1;
+const byte RECV_Q = 2;
 
  int curTeam = 1;
 
 int to_send=0;
 
+byte currentQuestion =0;
+
 void setup(void)
 {
   Serial.begin(115200);
-  Serial.println("RF24Network/examples/helloworld_rx/");
+  Serial.println("41030 Test Client");
  
  
- state =0;
+ state =PREGAME;
  
   SPI.begin();
   radio.begin();
@@ -83,7 +85,8 @@ void loop(void)
   switch(state){
   
   case PREGAME:
-      /* LISTEN FOR JOIN REQUESTS */
+  {
+      /* SEND JOIN REQUESTS */
     
       // Pump network
       network.update();
@@ -91,8 +94,7 @@ void loop(void)
  
       // Transmit join request,
       
-      Serial.print("Sending...");
-      Serial.println("");
+      Serial.println("Sending join");
 
        const uint16_t to = 00;
        
@@ -101,33 +103,109 @@ void loop(void)
        answer.answer = 3;
        
        
-       RF24NetworkHeader header(to);
+       RF24NetworkHeader header_a(to);
+      bool ok = network.write(header_a,&answer,sizeof(answer));
+      //if (ok)
+       // Serial.println("ok.");
+      //else
+        //Serial.println("failed.");
+        
+       
+        
+     while ( network.available() )
+      {
+        
+        // Got something!!
+        
+        /* RF24NetworkHeader header_b;
+     network.read(header_b,&question,sizeof(question));
+      
+        
+      Serial.print("QID:");
+        Serial.println(question.questionID);
+        if(question.questionID != 0){*/
+        
+        state = RECV_Q;
+        break;
+        
+        /*Serial.println("GOT First question");
+       break;
+        
+        }*/
+      
+      }
+       delay(2000);
+
+  }
+  break;
+  
+  
+  case TRANSMIT_ANS:
+     
+     {
+     network.update();
+     
+      RF24NetworkHeader header(to_send);
+      
+      answer.questionID = currentQuestion;
+      answer.teamID = curTeam;
+      answer.answer = 3;
+      
+      
       bool ok = network.write(header,&answer,sizeof(answer));
-      if (ok)
-        Serial.println("ok.");
-      else
-        Serial.println("failed.");
+        if(ok){
+          Serial.println(answer.questionID);
+        Serial.println("Answer sent!");
+        }else{
+        // Serial.print("Answer send failed!");
+        }
+        
+        network.update();
         
         
-        delay(3000);
+       while ( network.available() )
+      {
+     
+        state = RECV_Q;
+        break;
+      }
+      
+      delay(5000);
+        
+     }
+  
+  break;
+ 
+   case RECV_Q:
+  {
+     
+    
+      // Pump network
+      network.update();
+      
         
      while ( network.available() )
       {
       RF24NetworkHeader header;
       network.read(header,&question,sizeof(question));
       
-      
-      Serial.print("QID:");
-      Serial.println(question.questionID);
-      Serial.println(question.optionA);
+        
+        Serial.print("QID:");
+        Serial.print(question.questionID);
+        if(question.questionID != currentQuestion){
+        currentQuestion = question.questionID;
+        state = TRANSMIT_ANS;
+        
+       
+       Serial.println(question.optionA);
+       
+        break;
+        }
       
       }
-      
-      
-     
+
+  }
   break;
- 
-  
   
   
   
