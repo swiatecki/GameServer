@@ -38,19 +38,36 @@ class Questions:
 		self.curentQuestion = 1
 
 		self.questionList.append({
-			'Question': 'Hello',
+			'Question': 'Which Animal is the heaviest?',
 			'A': 'Monkey',
 			'B': 'Elephant',
 			'C': 'Slightly larger Goose',
-			'D': 'Goose',
+			'D': 'Gese',
 			})
 
 		self.questionList.append({
-			'Question': 'How many fingers do you have??',
+			'Question': 'How many fingers do you have?',
 			'A': '1',
 			'B': '11',
 			'C': '10',
 			'D': '6',
+			})
+
+		self.questionList.append({
+			'Question': 'How are you?',
+			'A': 'bad',
+			'B': 'terrible',
+			'C': 'terrific',
+			'D': 'good',
+			})
+
+
+		self.questionList.append({
+			'Question': 'Who is the most awesome?',
+			'A': 'design',
+			'B': 'elektro',
+			'C': 'design',
+			'D': 'design',
 			})
 
 
@@ -396,12 +413,12 @@ class serialThread(threading.Thread):
 				#print(currLine)
 
 				# We prefix out commands with //, if the line does not start with // its debug info
-
+				print("SERIAL:" + currLine)
 				if(currLine[:2] != '//'):
 					#Printing debug info
 					# print serial here
 					#if currLine is None:
-					print("SERIAL:" + currLine)
+					
 					if(rawline == b"STATE IS NOW:1.\r\n"):
 						print("STATE CHANGE!")
 						state =1
@@ -462,7 +479,8 @@ class serialThread(threading.Thread):
 					#ser.flushOutput()
 
 					if(sent == False and state ==1):
-						print("Sending")
+						print("GS: Sending")
+					
 						tmp = Q.getQuestion()
 
 						
