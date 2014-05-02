@@ -43,6 +43,7 @@ class Questions:
 			'B': 'Elephant',
 			'C': 'Slightly larger Goose',
 			'D': 'Gese',
+			'correctAnswer':'B'
 			})
 
 		self.questionList.append({
@@ -51,23 +52,26 @@ class Questions:
 			'B': '11',
 			'C': '10',
 			'D': '6',
+			'correctAnswer':'C'
 			})
 
 		self.questionList.append({
-			'Question': 'How are you?',
-			'A': 'bad',
-			'B': 'terrible',
-			'C': 'terrific',
-			'D': 'good',
+			'Question': 'When is the 41030 course?',
+			'A': 'Saturday',
+			'B': 'Wednesday',
+			'C': 'Thursday',
+			'D': 'Monday',
+			'correctAnswer':'B'
 			})
 
 
 		self.questionList.append({
-			'Question': 'Who is the most awesome?',
-			'A': 'design',
-			'B': 'elektro',
-			'C': 'design',
-			'D': 'design',
+			'Question': 'Which is not a Planet?',
+			'A': 'Earth',
+			'B': 'Jupiter',
+			'C': 'Venus',
+			'D': 'Pluto',
+			'correctAnswer':'D'
 			})
 
 
