@@ -28,10 +28,12 @@ sent = False
 state =0
 
 
+
 class Questions:
 
 
 	questionList = []
+	currentAnswers = {} #team, ans - good for lokking up
 
 
 	def __init__(self):
@@ -81,10 +83,42 @@ class Questions:
 		return self.questionList[self.curentQuestion-1]
 
 	def nextQuestion(self):
+		#Before we proceed, check answers and add points 
+
+		for teamID, answer in self.currentAnswers.items():
+
+			# Get the current question, and retrieve the answer.
+			if(answer == self.getQuestion()['correctAnswer']):
+
+				#We got a correct answer, find the player in playerList. who has the correct ID
+				# Could try the python style matches = (x for x in lst if x > 6), which returns a list of items which meet the requirements
+
+				for p in playerList:
+					if(p.id == teamID):
+						# It's the one! Add points
+						print("Adding point to team" + str(teamID) + " for the answer:" + answer)
+						p.addPoint()
+
+
+
+
+
+		#Then empty out answers 
+		#Maybe write to file before emptying?
+		self.currentAnswers.clear()
+
+		#OK, on to the next question
+
+
 		self.curentQuestion += 1
 
 	def questionID(self):
 		return self.curentQuestion
+	def getAnswers(self):
+		return self.currentAnswers
+
+	def addAnswer(self,teamID,answer):
+		self.currentAnswers[teamID] = answer 
 
 
 
@@ -95,6 +129,12 @@ class Player:
 	def __init__(self, _id):
 		self.id = _id
 		self.score = 0
+
+	def addPoint(self):
+		self.score += 1
+
+	def getScore(self):
+		return self.score
 
 
 
@@ -229,6 +269,9 @@ class Form(QWidget):
 				self.q.ans2.setText("B: " +self.q.theQuestion['B'])
 				self.q.ans3.setText("C: " +self.q.theQuestion['C'])
 				self.q.ans4.setText("D: " +self.q.theQuestion['D'])
+				self.q.lblAns.setText(str(len(Q.getAnswers())))
+
+				self.q.updateAnsList()
 
 
 
@@ -245,12 +288,12 @@ class QuestionForm(QWidget):
 		f = QFont('Helvetica', 16)
 		self.setFont(f)
 		
-		self.qlist = QListWidget()
+		self.ansList = QListWidget()
 
-		buttonLayout1 = QVBoxLayout()
+		##buttonLayout1 = QVBoxLayout()
 		
 		
-		buttonLayout1.addWidget(self.qlist)
+		##buttonLayout1.addWidget(self.qlist)
 		
 		
 		"""for i in [1,2,4,1,7,3]:
@@ -315,7 +358,7 @@ class QuestionForm(QWidget):
 
 		mainLayout.addWidget(self.titleLabel, 0, 0)
 		mainLayout.addLayout(answers, 1, 0)
-		mainLayout.addLayout(buttonLayout1, 2, 0)
+		mainLayout.addWidget(self.ansList, 2, 0)
 		mainLayout.addLayout(navLayout, 3, 0)
 		mainLayout.addLayout(statusLayout, 4, 0)
 
@@ -345,6 +388,23 @@ class QuestionForm(QWidget):
 		#state = 0
 
 		newInfo = True
+
+	def updateAnsList(self):
+		#Check if there are more answers than thoose displayed
+		if(len(Q.getAnswers()) > self.ansList.count()):
+			# Redraw the list
+			
+			#First delte the old
+			self.ansList.clear()
+
+			# Add the new
+			for teamID in Q.getAnswers(): #Should get the key, which is the teamID
+				item = QListWidgetItem(self.ansList)
+				icon = QIcon('arrow.png')
+				item.setText('Group #' + str(teamID))
+				item.setIcon(icon)
+
+				
 
 
 
@@ -463,7 +523,17 @@ class serialThread(threading.Thread):
 								newInfo = True
 
 						else:
+							# Got a real answer, lets handle this.
 							print("GS: Got ans for team" + str(tID) + " on Q=" + str(qID) + " with ans = " + str(answer))
+
+							#Add to internal structure
+							numToLet = ['A','B','C','D']
+							
+
+							Q.addAnswer(tID,numToLet[answer])
+
+							#Update GUI!
+							newInfo = True
 
 							
 

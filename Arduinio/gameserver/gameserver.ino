@@ -6,6 +6,8 @@
 #define MAXCLIENTS 18
 #define BUFFERLEN 30
 
+byte debug = 0; // Set this to 1, and compile for verbose info.
+
 RF24 radio(8,7);
 
 // Network uses that radio
@@ -320,10 +322,13 @@ void loop(void)
         if(currentQuestion == 2){
            Serial.println("Got data2");
           }
+          
+          if(debug){
         Serial.print("Got ans from");
           Serial.println(answer.teamID);
           Serial.print("With QID");
           Serial.println(answer.questionID);
+          }
        
        if(answer.questionID != currentQuestion){
       // Serial.println("ignore1");
