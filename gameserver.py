@@ -291,6 +291,7 @@ class QuestionForm(QWidget):
 		self.setFont(f)
 		
 		self.ansList = QListWidget()
+		self.ansList.setFont(f)
 
 		##buttonLayout1 = QVBoxLayout()
 		
@@ -350,6 +351,10 @@ class QuestionForm(QWidget):
 
 
 
+
+	
+
+
 		#Nav buttons
 		navLayout = QHBoxLayout()	
 		self.next = QPushButton("Next")
@@ -358,11 +363,18 @@ class QuestionForm(QWidget):
 		navLayout.addWidget(self.next)
 
 
+
+		finalLayout = QHBoxLayout()
+		self.finalBtn = QPushButton("Finish Game")
+		finalLayout.addWidget(self.finalBtn)
+		
+
 		mainLayout.addWidget(self.titleLabel, 0, 0)
 		mainLayout.addLayout(answers, 1, 0)
 		mainLayout.addWidget(self.ansList, 2, 0)
 		mainLayout.addLayout(navLayout, 3, 0)
 		mainLayout.addLayout(statusLayout, 4, 0)
+		mainLayout.addLayout(finalLayout, 5, 0)
 
 		self.setLayout(mainLayout)
 		self.setWindowTitle("Question")
