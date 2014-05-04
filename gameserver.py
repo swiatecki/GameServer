@@ -105,7 +105,9 @@ class Questions:
 
 		#Then empty out answers 
 		#Maybe write to file before emptying?
+
 		self.currentAnswers.clear()
+
 
 		#OK, on to the next question
 
@@ -381,7 +383,7 @@ class QuestionForm(QWidget):
 		global newInfo
 		global sent
 		#global state
-
+		self.ansList.clear()
 		Q.nextQuestion()
 		self.theQuestion = Q.getQuestion()
 		sent = False
@@ -523,6 +525,7 @@ class serialThread(threading.Thread):
 								newInfo = True
 
 						else:
+							print("here!!!")
 							# Got a real answer, lets handle this.
 							print("GS: Got ans for team" + str(tID) + " on Q=" + str(qID) + " with ans = " + str(answer))
 

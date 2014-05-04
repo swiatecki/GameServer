@@ -338,7 +338,7 @@ void loop(void)
         if(rcvFrom[answer.teamID] == 0){
           // New answer, send to server
           
-          Serial.print("Got new, uniqe ans:");
+          Serial.println("Got new, uniqe ans:");
           
         
           sendToServer(answer.questionID,answer.teamID, answer.answer);
