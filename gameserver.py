@@ -26,6 +26,7 @@ started = False
 Q = None;
 sent = False
 state =0
+F = None;
 
 
 
@@ -70,10 +71,10 @@ class Questions:
 		self.questionList.append({
 			'Question': 'Which is not a Planet?',
 			'A': 'Earth',
-			'B': 'Jupiter',
+			'B': 'Pluto',
 			'C': 'Venus',
-			'D': 'Pluto',
-			'correctAnswer':'D'
+			'D': 'Jupiter',
+			'correctAnswer':'B'
 			})
 
 
@@ -96,8 +97,9 @@ class Questions:
 				for p in playerList:
 					if(p.id == teamID):
 						# It's the one! Add points
-						print("Adding point to team" + str(teamID) + " for the answer:" + answer)
+						print("GS: Adding point to team" + str(teamID) + " for the answer:" + answer)
 						p.addPoint()
+						print("GS: Score is now:" + str(p.getScore()))
 
 
 
@@ -367,6 +369,9 @@ class QuestionForm(QWidget):
 		finalLayout = QHBoxLayout()
 		self.finalBtn = QPushButton("Finish Game")
 		finalLayout.addWidget(self.finalBtn)
+
+
+		self.finalBtn.clicked.connect(self.finalHandler)
 		
 
 		mainLayout.addWidget(self.titleLabel, 0, 0)
@@ -403,6 +408,37 @@ class QuestionForm(QWidget):
 
 		newInfo = True
 
+	def finalHandler(self):
+		global F
+		global playerList
+		for teamID, answer in Q.currentAnswers.items():
+
+			# Get the current question, and retrieve the answer.
+			if(answer == Q.getQuestion()['correctAnswer']):
+
+				#We got a correct answer, find the player in playerList. who has the correct ID
+				# Could try the python style matches = (x for x in lst if x > 6), which returns a list of items which meet the requirements
+
+				for p in playerList:
+					if(p.id == teamID):
+						# It's the one! Add points
+						print("GS: Adding point to team" + str(teamID) + " for the answer:" + answer)
+						p.addPoint()
+						print("GS: Score is now:" + str(p.getScore()))
+
+
+		##
+		
+		#Game has ended, show score frame!
+
+		self.close()
+		F = FinalForm()
+
+		F.show()
+
+
+
+
 	def updateAnsList(self):
 		#Check if there are more answers than thoose displayed
 		if(len(Q.getAnswers()) > self.ansList.count()):
@@ -420,7 +456,71 @@ class QuestionForm(QWidget):
 
 				
 
+class FinalForm(QWidget):
+	
+	def __init__(self, parent=None):
+		super(FinalForm, self).__init__(parent)
+		global playerList
+		""" THREADING """
 
+		# Create a list of lists where
+
+		results  = []
+
+		#pl = [x.id for x in playerList]
+
+
+		""" LAYOUT """
+		f = QFont('Helvetica', 16)
+		self.setFont(f)
+		
+		self.resultList = QListWidget()
+		self.resultList.setFont(f)
+
+	
+
+
+		f = QFont('Helvetica', 16)
+		
+
+		mainLayout = QGridLayout()
+		self.titleLabel = QLabel("Results")
+		font = QFont('Helvetica', 42)
+		self.titleLabel.setFont(font)
+
+
+
+
+		for p in playerList:
+				print(p.getScore())
+				r = [p.id,p.getScore() ]
+				print(r)
+				results.append(r)
+
+
+		for r in results:
+			item = QListWidgetItem(self.resultList)
+			icon = QIcon('ok.png')
+			item.setText('Group #' + str(r[0]) + ":" + str(r[1]))
+			item.setIcon(icon)
+
+
+
+		endLayout = QHBoxLayout()
+		self.exitbtn = QPushButton("Exit Game")
+		endLayout.addWidget(self.exitbtn)
+
+		mainLayout.addWidget(self.titleLabel, 0, 0)
+		#mainLayout.addLyout(answers, 1, 0)
+		mainLayout.addWidget(self.resultList, 2, 0)
+		mainLayout.addLayout(endLayout, 5, 0)
+
+		self.setLayout(mainLayout)
+		self.setWindowTitle("Results")
+
+
+
+		
 
 
 
