@@ -46,6 +46,7 @@ const byte RECV_Q = 2;
  int curTeam = 1;
 
 int to_send=0;
+int tmpControl = 0;
 
 byte currentQuestion =0;
 
@@ -78,6 +79,13 @@ void loop(void)
     
     Serial.println("Team IS NOW");
     Serial.print(curTeam);
+    
+    
+    if(incomming == 't'){
+    
+     tmpControl = 1;
+    
+    }
   }
   
   
@@ -145,29 +153,51 @@ void loop(void)
      {
      network.update();
      
-      RF24NetworkHeader header(to_send);
+     
+////
+    
       
-      answer.questionID = currentQuestion;
-      answer.teamID = curTeam;
-      answer.answer = 3;
+   
+        
+     if(tmpControl == 1){
+        
+        Serial.println("CL:Sending ANS");
+     
       
-      
-      bool ok = network.write(header,&answer,sizeof(answer));
-        if(ok){
-          Serial.println(answer.questionID);
-        Serial.println("Answer sent!");
-        }else{
-        // Serial.print("Answer send failed!");
-        }
+        RF24NetworkHeader header(to_send);
+        
+        answer.questionID = currentQuestion;
+        answer.teamID = curTeam;
+        answer.answer = 3;
+        
+        
+        bool ok = network.write(header,&answer,sizeof(answer));
+          if(ok){
+            Serial.println(answer.questionID);
+          Serial.println("Answer sent!");
+          }else{
+           Serial.print("Answer send failed!");
+          }
+          
+          
+        
+     }
+        /////
+        
+        
+        
+        
         
         network.update();
         
         
        while ( network.available() )
       {
-     
+       if(tmpControl == 1){
         state = RECV_Q;
+         tmpControl =0;
         break;
+       }
       }
       
       delay(5000);
