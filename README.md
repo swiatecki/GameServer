@@ -13,3 +13,4 @@ ToDo
 * Timestamp console output
 * Imort questions from JSON
 * Who answered what - and was it correct? (Log-file)
+* Disable the next-button, when at final Q
