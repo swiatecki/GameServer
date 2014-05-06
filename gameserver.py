@@ -411,6 +411,7 @@ class QuestionForm(QWidget):
 	def finalHandler(self):
 		global F
 		global playerList
+		
 		for teamID, answer in Q.currentAnswers.items():
 
 			# Get the current question, and retrieve the answer.
@@ -637,7 +638,7 @@ class serialThread(threading.Thread):
 								newInfo = True
 
 						else:
-							print("here!!!")
+							#print("here!!!")
 							# Got a real answer, lets handle this.
 							print("GS: Got ans for team" + str(tID) + " on Q=" + str(qID) + " with ans = " + str(answer))
 
