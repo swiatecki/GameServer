@@ -12,3 +12,4 @@ ToDo
 * ~~GUI: Exit button -> Show final score! ~~
 * Timestamp console output
 * Imort questions from JSON
+* Who answered what - and was it correct? (Log-file)
