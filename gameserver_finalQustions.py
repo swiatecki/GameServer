@@ -41,66 +41,414 @@ class Questions:
 	def __init__(self):
 		self.curentQuestion = 1
 
-		#1
+		 #1
 		self.questionList.append({
-			'Question': 'Who drinks the most coffee',
-			'A': 'Ali',
-			'B': 'Jakob',
-			'C': 'Nicholas',
-			'D': 'Dronning M.',
-			'correctAnswer':'A'
-			})
-            
-        #2
-		self.questionList.append({
-			'Question': 'Who smokes the most?',
-			'A': 'Ali',
-			'B': 'Jakob',
-			'C': 'Nicholas',
-			'D': 'Dronning M.',
+			'Question': 'Where was mechatronics invented?',
+			'A': 'Korea',
+			'B': 'Germany',
+			'C': 'USA',
+			'D': 'Japan',
 			'correctAnswer':'D'
 			})
-            
-    	#3
+        #2
 		self.questionList.append({
-			'Question': 'What sqrt(625)?',
-			'A': '20',
-			'B': '25',
-			'C': '50',
-			'D': '75',
+			'Question': 'What is the name of design methodology \n that is commonly used in mechatronics?',
+			'A': 'V model',
+			'B': 'W model',
+			'C': 'Morphology model',
+			'D': 'VDI 2246',
+			'correctAnswer':'A'
+			})
+        #3
+		self.questionList.append({
+			'Question': 'Which domain is not related to mekatronik?',
+			'A': 'Information Tech.',
+			'B': 'Electronics Eng.',
+			'C': 'Management Eng.',
+			'D': 'Mechanical eng. ',
+			'correctAnswer':'C'
+			})
+
+        #4
+		self.questionList.append({
+			'Question': 'Which one is not a mechatronics product \n ( or least mechatronics related..)?',
+			'A': 'An iphone',
+			'B': 'A vending machine',
+			'C': 'A car',
+			'D': 'A dymo labeling machine',
+			'correctAnswer':'B'
+			})
+        
+        #5 - img
+		self.questionList.append({
+			'Question': 'What is the current?',
+			'A': '0.205A',
+			'B': '0.0205A',
+			'C': '0.0123A',
+			'D': '0.123A',
+			'correctAnswer':'C'
+			})
+
+	
+        #6 - img
+		self.questionList.append({
+			'Question': 'Resistance between A-W is ..',
+			'A': 'greater',
+			'B': 'smaller',
+			'C': 'equal',
+			'D': 'not related',
 			'correctAnswer':'B'
 			})
 
-            
-        #4
+	
+        #7
 		self.questionList.append({
-			'Question': 'Would you rather fight 1 horse-sized duck \n or 100 duck-sized horses?',
-			'A': '1 h.s.d',
-			'B': '100 d.s.h',
-			'C': '-',
-			'D': '-',
-			'correctAnswer':'B'
-			})
-            
-        #5 - img
-		self.questionList.append({
-			'Question': 'Who is heavier?',
-			'A': 'Per Boelskifte',
-			'B': 'Ali',
-			'C': 'Yutaka',
-			'D': 'Master Fatman',
-			'correctAnswer':'D'
-			})
-            
-        #6
-		self.questionList.append({
-			'Question': 'What is the course no for mekatronik?',
-			'A': '41030',
-			'B': '41031',
-			'C': '42030',
-			'D': '42031',
+			'Question': 'What is the chip on the arduino uno?',
+			'A': 'Atmega 328',
+			'B': 'Atmega u16',
+			'C': 'Atmega u32',
+			'D': 'Atmega2460',
 			'correctAnswer':'A'
 			})
+
+	
+        #8
+		self.questionList.append({
+			'Question': 'Which are the bare-essential function(s) \n for an arduino to be able to run?',
+			'A': 'setup,serial',
+			'B': 'serial,loop',
+			'C': 'serial,println',
+			'D': 'setup, loop',
+			'correctAnswer':'D'
+			})
+        #9
+		self.questionList.append({
+			'Question': 'Your arduino is connected to USB power, and the \n analogRead(A0) = 346   / what is the voltage read by the ADC?',
+			'A': '1.69',	
+			'B': '2.31',
+			'C': '2.69',
+			'D': '3.31',
+			'correctAnswer':'A'
+			})
+
+	
+        #10
+		self.questionList.append({
+			'Question': 'Your arduino is connected to USB power, and if \n we use: analogWrite(6,135), how much Voltage \n is generated at the pin no 6?',
+			'A': '0.66',
+			'B': '1.22',
+			'C': '2.06',
+			'D': '2.65',
+			'correctAnswer':'D'
+			})
+
+	
+        #11
+		self.questionList.append({
+			'Question': 'which one is NOT correct about sensors?',
+			'A': 'converts physical measurements to electrical',
+			'B': 'can be active / passive',
+			'C': 'can be used as an output',
+			'D': 'can be analog or digital',
+			'correctAnswer':'C'
+			})
+        #12
+		self.questionList.append({
+			'Question': 'which one can NOT be used to detect physical presence?',
+			'A': 'gyroscope',
+			'B': 'laser range finder',
+			'C': 'sonar',
+			'D': 'photoelectric switch',
+			'correctAnswer':'A'
+			})
+
+	
+        #13
+		self.questionList.append({
+			'Question': 'which one can be used to detect Rotation?',
+			'A': 'sonar/ultrasonic rf',
+			'B': 'photolectric switch',
+			'C': 'linear potentiometer',
+			'D': 'optical encoders',
+			'correctAnswer':'D'
+			})
+
+	
+        #14
+		self.questionList.append({
+			'Question': 'Which one is NOT related to sensor performance?',
+			'A': 'range',
+			'B': 'cost',
+			'C': 'accuracy',
+			'D': 'resolution',
+			'correctAnswer':'B'
+			})
+        #15
+		self.questionList.append({
+			'Question': 'which one is NOT a typical machine element?',
+			'A': 'battery',
+			'B': 'belt',
+			'C': 'spring',
+			'D': 'gear',
+			'correctAnswer':'A'
+			})
+
+	
+        #16
+		self.questionList.append({
+			'Question': 'gears can NOT be used for? changing ..',
+			'A': 'speed',
+			'B': 'power',
+			'C': 'torque',
+			'D': 'axis of rotation',
+			'correctAnswer':'B'
+			})
+
+	
+        #17
+		self.questionList.append({
+			'Question': 'pulleys you got for the CNC project has ... teeth',
+			'A': '8',
+			'B': '12',
+			'C': '16',
+			'D': '20',
+			'correctAnswer':'C'
+			})
+        #18
+		self.questionList.append({
+			'Question': 'the belt you got for the CNC project has \n ... tooth profile',
+			'A': 'T2.5',
+			'B': 'T5',
+			'C': 'GT2.5',
+			'D': 'GT5',
+			'correctAnswer':'A'
+			})
+
+	
+        #19 - img
+		self.questionList.append({
+            'Question': 'If gear A has the speed of 30 rpm,\n what is the speed of gear D? ',
+			'A': '90',
+			'B': '180',
+			'C': '360',
+			'D': '400',
+			'correctAnswer':'C'
+			})
+
+	
+        #20
+		self.questionList.append({
+			'Question': 'The x-axis of your machine have a 16 teeth pulley and \n t2.5 belt (2.5mm pitch). Your stepper motor can do \n 200 steps per revolution. what is the steps/mm \n value your controller needs to know?',
+			'A': '2.5',
+			'B': '5.0',
+			'C': '25.0',
+			'D': '31.25',
+			'correctAnswer':'B'
+			})
+
+	
+        #21
+		self.questionList.append({
+			'Question': 'Which 3d printing technology does not exist at dtu fablab?',
+			'A': 'SLS - selective laser sintering',
+			'B': 'FDM - Fused depositon manufacturing',
+			'C': 'LENS - LAser Engineered Net Shaping',
+			'D': 'LOM - Laminated object manufacturing',
+			'correctAnswer':'C'
+			})
+        #22 - img
+		self.questionList.append({
+			'Question': 'you are printing on your good friend ultimaker. \n which one does not need any support structures?',
+			'A': 'A',
+			'B': 'B',
+			'C': 'C',
+			'D': 'D',
+			'correctAnswer':'D'
+			})
+
+	
+        #23
+		self.questionList.append({
+			'Question': 'degrees of freedom (DOF):in how many different ways an \n object’s orientation and position can be changed? \n What is the OPERATIONAL DOF a car?',
+			'A': '1',
+			'B': '2',
+			'C': '3',
+			'D': '6',
+			'correctAnswer':'B'
+			})
+
+	
+        #24 - img 
+		self.questionList.append({
+			'Question': 'A revolute joint (hinge) has 1 DOF. \n Which moments are NOT transmitted from one link to another? ',
+			'A': 'Mx',
+			'B': 'My',
+			'C': 'Mz',
+			'D': 'None',
+			'correctAnswer':'B'
+			})
+        
+        #25 - img
+		self.questionList.append({
+			'Question': 'A sperical joint has 3 DOF. Which moments are \n NOT transmitted from one link to another?',
+			'A': 'Mx',
+			'B': 'My',
+			'C': 'Mz',
+			'D': 'None',
+			'correctAnswer':'D'
+			})
+
+	
+        #26
+		self.questionList.append({
+			'Question': 'Which type of motor is most prone to internal \n mechanical friction and failure?',
+			'A': 'Brushed DC motor',
+			'B': 'Brushless DC motor',
+			'C': 'AC motor',
+			'D': 'Stepper motor',
+			'correctAnswer':'A'
+			})
+
+	
+        #27
+		self.questionList.append({
+			'Question': 'Which one does not need a closed-loop \n feedback for position control?',
+			'A': 'Servo motor',
+			'B': 'Brushless DC motor',
+			'C': 'Brushless DC motor w/ gearbox',
+			'D': 'Stepper motor',
+			'correctAnswer':'D'
+			})
+        #28
+		self.questionList.append({
+			'Question': 'Which type of actuation is not electromagnetic?',
+			'A': 'Solenoid',
+			'B': 'Peltier',
+			'C': 'Stepper',
+			'D': 'Servo motor',
+			'correctAnswer':'B'
+			})
+
+	
+        #29
+		self.questionList.append({
+			'Question': 'Resistance of a nichrome wire does NOT depend on ..',
+			'A': 'length',
+			'B': 'thickness',
+			'C': 'temperature',
+			'D': 'voltage',
+			'correctAnswer':'D'
+			})
+
+	
+        #30
+		self.questionList.append({
+			'Question': 'You have a 5V power source and 24 WG (4.563 Ohms/m) \n wire. You want to cut foam at 316 C (2.76 A current needed).\n What should be the length of your wire?',
+			'A': '82.6 cm',
+			'B': '62.9 cm',
+			'C': '39.7 cm',
+			'D': '30.2 cm',
+			'correctAnswer':'C'
+			})
+        
+       #31
+		self.questionList.append({
+			'Question': 'A typical (e.g. radiator) thermostat uses ..',
+			'A': 'open-loop control',
+			'B': 'closed-loop control',
+			'C': 'PI control',
+			'D': 'PID control',
+			'correctAnswer':'B'
+			})
+    
+
+       #32 - img 
+		self.questionList.append({
+			'Question': 'which one uses a PID controller?',
+			'A': 'A',
+			'B': 'B',
+			'C': 'C',
+			'D': 'D',
+			'correctAnswer':'A'
+			})
+    
+
+        #33
+		self.questionList.append({
+			'Question': 'we can build logic gates with ...',
+			'A': 'resistors',
+			'B': 'capacitors',
+			'C': 'diodes',
+			'D': 'transistors',
+			'correctAnswer':'D'
+			})
+    
+
+        #34
+		self.questionList.append({
+			'Question': 'If we have two variables: X = 10 and Y= 900, \n what is the reulst of this boolean expression:\n NOT((X==10)OR(Y>1000))AND (X>Y)',
+			'A': 'true',
+			'B': 'false',
+			'C': 'neither',
+			'D': 'no idea',
+			'correctAnswer':'B'
+			})
+    
+
+        #35
+		self.questionList.append({
+			'Question': 'what are c,d?',
+			'A': '1,1',
+			'B': '1,0',
+			'C': '0,1',
+			'D': '0,0',
+			'correctAnswer':'A'
+			})
+    
+
+        #36 - img
+		self.questionList.append({
+			'Question': 'We have a coffee machine that sells coffee for 60 cents \n and can accept 5, 10, 25 cents. If we design a state machine\n based on the amount of money put in the vending machine, \nhow many states we would have?  ',
+			'A': '8',
+			'B': '10',
+			'C': '12',
+			'D': '14',
+			'correctAnswer':'C'
+			})
+    
+
+        #37
+		self.questionList.append({
+			'Question': 'NRF24L01 uses .. ',
+			'A': '1-Wire',
+			'B': 'I2C',
+			'C': 'TWI',
+			'D': 'SPI',
+			'correctAnswer':'D'
+			})
+    
+
+        #38
+		self.questionList.append({
+			'Question': 'Which one is not suitable for the laser \n cutting/engraving machine?',
+			'A': 'Acrylic',
+			'B': 'plywood',
+			'C': 'PET',
+			'D': 'Stone',
+			'correctAnswer':'C'
+			})
+    
+
+        #39 - img
+		self.questionList.append({
+			'Question': 'What should we do?',
+			'A': 'inc-inc',
+			'B': 'dec-inc',
+			'C': 'na-dec',
+			'D': 'inc-na',
+			'correctAnswer':'B'
+			})
+
 
 	
 

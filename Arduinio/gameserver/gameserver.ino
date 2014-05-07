@@ -8,6 +8,19 @@
 
 byte debug = 0; // Set this to 1, and compile for verbose info.
 
+int numC = 0;
+
+
+
+const unsigned long interval = 2000; //ms
+
+// When did we last send?
+unsigned long last_sent;
+
+// How many have we sent already
+unsigned long packets_sent;
+
+
 RF24 radio(8,7);
 
 // Network uses that radio
@@ -41,6 +54,7 @@ answer;
 
 
 int allAns =0;
+int beforeAns =0;
 
 byte state;
 
@@ -141,6 +155,7 @@ void loop(void)
          // New client, add it! 
           Serial.print("GOT new client for pos");
           Serial.println(numClients);
+          numC ++;
           clients[numClients] = header_in.from_node;
           numClients++;
           i=MAXCLIENTS;
@@ -268,16 +283,31 @@ void loop(void)
              // Retry code
              Serial.print("send failed for:");
               Serial.println(clients[i]);
-             sendTo[i] = 2; // 2 is fail
+              bool sendOK = false;
+              
+              do{
+               sendOK = network.write(header,&question,sizeof(question));
+               network.update();
+              
+              }while(sendOK == false);
+              
+              
+             //sendTo[i] = 2; // 2 is fail
              }
            }
          }
          // Implement som ok retry!
+         
+       /*  int allOK =1;
          for(int i =0;i<MAXCLIENTS;i++){
          
            
+           if(clients[i] == 2){
+           allOK = 
+           }
+           
          
-         }
+         }*/
          // All sent! 
          save = 0;
          state = RECV_A;
@@ -306,22 +336,14 @@ void loop(void)
      3) if not, parse the data 
      4) transmit to gameserver.
      */
-
-    // ToDo: add array to keep track of the clients who have answered the current question
-
-
     
     while ( network.available() )
       {
         
-          
-        
         RF24NetworkHeader header_ans;
         
         network.read(header_ans,&answer,sizeof(answer));
-        if(currentQuestion == 2){
-           Serial.println("Got data2");
-          }
+      
           
           if(debug){
         Serial.print("Got ans from");
@@ -344,7 +366,9 @@ void loop(void)
           sendToServer(answer.questionID,answer.teamID, answer.answer);
             
           rcvFrom[answer.teamID] = 1;
-          
+          Serial.print("Writing to space ");
+          Serial.println(answer.teamID);
+       
          
         }else{
        // Serial.println("ignore2");
@@ -352,21 +376,44 @@ void loop(void)
       }
       }
 
-       
-           
-       
-       // Reset stuff for next time! 
-       allAns = 0;
+       allAns =0;
        
        //check number of answers
        for(int i=0;i<100;i++){
        
        if(rcvFrom[i]){
        allAns++;
+      
        
        }
        
        }
+       
+       if(allAns > 0){
+       
+       beforeAns += allAns;
+       }
+       
+          for(int x=0;x<100;x++){
+ 
+      rcvFrom[x] = 0;
+
+       }
+       
+       
+     unsigned long now = millis();
+            if ( now - last_sent >= interval  )
+            {
+              last_sent = now;
+
+        Serial.print("BF is:");
+       Serial.println(beforeAns);
+  
+  }
+    
+       
+   
+       
        int tmp2 =0;
        
        // Check number of clients
@@ -380,17 +427,28 @@ void loop(void)
        
        }
        
-       if(tmp2 == allAns){
+       /*Serial.print("Tmp2 is:");
+       Serial.print(tmp2);
+       Serial.print("allAns is:");
+       Serial.println(allAns);*/
+       
+       if(numC == beforeAns){
        
        // all recv - gogo
-       Serial.println("changing state!!!");
-       state = TRANSMIT_Q;
-       
+      
+       Serial.println("All recieved, GOING to transmit");
+       Serial.println(beforeAns);
+        Serial.println(tmp2);
+       beforeAns =0;
+        // Reset stuff for next time! 
+        allAns = 0;
+        
+         state = TRANSMIT_Q;
+        
       for(int x=0;x<100;x++){
-       
+ 
       rcvFrom[x] = 0;
-       
-       
+
        }
        
        }
